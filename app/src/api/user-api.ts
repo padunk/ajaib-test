@@ -2,7 +2,7 @@ import { useQuery } from "react-query";
 import axios from "../axios";
 import { User } from "../types/user";
 
-type GetUserParams = {
+export type GetUserParams = {
   page: number;
   pageSize: number;
   results: number;

@@ -1,5 +1,5 @@
 import React from "react";
-import { useGetUser } from "../../api/user-api";
+import { GetUserParams, useGetUser } from "../../api/user-api";
 import {
   Input,
   Space,
@@ -10,62 +10,99 @@ import {
   Select,
   Form,
   Button,
+  TablePaginationConfig,
 } from "antd";
 import { tw } from "twind";
 import formatDate from "date-fns/format";
+import { ColumnsType } from "antd/lib/table";
+import { User } from "../../types/user";
+import { FilterValue, SorterResult } from "antd/lib/table/interface";
+import produce from "immer";
 
-type Props = {};
-
-type UserDataSource = {
-  key: string;
-  username: string;
-  name: string;
-  email: string;
-  gender: string;
-  date: string;
-};
-
-const columns = [
+const columns: ColumnsType<User> = [
   {
     title: "Username",
-    dataIndex: "username",
+    dataIndex: "login",
     key: "username",
+    render: (login) => login.username,
   },
   {
     title: "Name",
     dataIndex: "name",
     key: "name",
+    render: (name) => `${name.first} ${name.last}`,
+    sorter: true,
   },
   {
     title: "Email",
     dataIndex: "email",
     key: "email",
+    sorter: true,
   },
   {
     title: "Gender",
     dataIndex: "gender",
     key: "gender",
+    sorter: true,
   },
   {
     title: "Registered Date",
-    dataIndex: "date",
+    dataIndex: "registered",
     key: "date",
+    render: (registered) =>
+      formatDate(new Date(registered.date), "dd-MM-yyyy HH:mm"),
+    sorter: true,
   },
 ];
 
-export default function Home({}: Props) {
+const PAGE_SIZE = 8;
+const UPDATE_VALUE = "UPDATE_VALUE";
+const RESET_VALUE = "RESET_VALUE";
+
+export type ActionType = {
+  type: typeof UPDATE_VALUE | typeof RESET_VALUE;
+  payload?: any;
+};
+
+const initialParams: GetUserParams = {
+  gender: "all",
+  keyword: "",
+  sortBy: "",
+  sortOrder: "",
+  page: 1,
+  pageSize: PAGE_SIZE,
+  results: 24,
+};
+
+function reducer(state: GetUserParams, action: ActionType) {
+  switch (action.type) {
+    case UPDATE_VALUE:
+      return produce(state, (newState) => {
+        return {
+          ...newState,
+          ...action.payload,
+        };
+      });
+    case RESET_VALUE:
+      return initialParams;
+    default:
+      throw new Error("Type is not define.");
+  }
+}
+
+export default function Home() {
   const [form] = Form.useForm();
-  const [gender, setGender] = React.useState("");
-  const [keyword, setKeyword] = React.useState("");
+  const [params, dispatch] = React.useReducer(reducer, initialParams);
 
-  const [userResult, setUserResult] = React.useState<UserDataSource[]>([]);
-  const {
-    status,
-    data: user,
-    error,
-  } = useGetUser({ page: 1, pageSize: 10, results: 10, keyword, gender });
+  const { status, data: user, error } = useGetUser(params);
 
-  const onSearch = (value: string) => setKeyword(value);
+  const onSearchKeyword = (keyword: string) =>
+    dispatch({
+      type: UPDATE_VALUE,
+      payload: {
+        keyword,
+      },
+    });
 
   const renderError = () => {
     message.error(error);
@@ -76,21 +113,29 @@ export default function Home({}: Props) {
     );
   };
 
-  React.useEffect(() => {
-    if (user && user.length > 0) {
-      const results: UserDataSource[] = user.map((u, idx) => {
-        return {
-          key: String(idx),
-          username: u.login.username,
-          name: `${u.name.first} ${u.name.last}`,
-          email: u.email,
-          gender: u.gender,
-          date: formatDate(new Date(u.registered.date), "dd-MM-yyyy HH:mm"),
-        };
-      });
-      setUserResult(results);
+  const handleTableChange = (
+    pagination: TablePaginationConfig,
+    filters: Record<string, FilterValue | null>,
+    sorter: SorterResult<User> | SorterResult<User>[]
+  ) => {
+    console.log("tableChange :>> ", pagination, sorter);
+    let field = "";
+    let order = "";
+    if (!Array.isArray(sorter)) {
+      field = sorter.field as string;
+      order = sorter.order as string;
     }
-  }, [user]);
+
+    dispatch({
+      type: UPDATE_VALUE,
+      payload: {
+        page: pagination.current,
+        pageSize: pagination.pageSize,
+        sortBy: field ?? "",
+        sortOrder: order ?? "",
+      },
+    });
+  };
 
   return (
     <div className={tw`flex flex-col gap-8`}>
@@ -104,13 +149,22 @@ export default function Home({}: Props) {
           <Input.Search
             placeholder="input search text"
             allowClear
-            onSearch={onSearch}
+            onSearch={onSearchKeyword}
             enterButton
           />
         </Form.Item>
         <div className={tw`w-40`}>
           <Form.Item label="Gender" name="gender">
-            <Select onChange={(value) => setGender(value)}>
+            <Select
+              onChange={(gender) =>
+                dispatch({
+                  type: UPDATE_VALUE,
+                  payload: {
+                    gender,
+                  },
+                })
+              }
+            >
               <Select.Option value="all">All</Select.Option>
               <Select.Option value="female">Female</Select.Option>
               <Select.Option value="male">Male</Select.Option>
@@ -121,8 +175,9 @@ export default function Home({}: Props) {
           type="default"
           onClick={() => {
             form.resetFields();
-            setGender("all");
-            setKeyword("");
+            dispatch({
+              type: RESET_VALUE,
+            });
           }}
           className={tw`mt-1`}
         >
@@ -137,7 +192,16 @@ export default function Home({}: Props) {
       ) : user && user.length === 0 ? (
         <Typography.Text>No user found</Typography.Text>
       ) : (
-        <Table columns={columns} dataSource={userResult} />
+        <Table<User>
+          columns={columns}
+          dataSource={user}
+          pagination={{
+            defaultPageSize: params.pageSize,
+            current: params.page,
+          }}
+          onChange={handleTableChange}
+          rowKey={(data) => data.login.uuid}
+        />
       )}
     </div>
   );
