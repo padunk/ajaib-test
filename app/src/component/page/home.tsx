@@ -2,7 +2,6 @@ import React from "react";
 import { GetUserParams, useGetUser } from "../../api/user-api";
 import {
   Input,
-  Space,
   Spin,
   Table,
   message,
