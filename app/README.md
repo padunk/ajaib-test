@@ -4,13 +4,13 @@
 
 This project is create to fulfilled the requirements for Senior Frontend Web Engineer position
 
+This project is create with [Vite](https://vite.dev) and [TypeScript](https://typescriptlang.org)
+
+Demo site is [here](https://ajaib-test-ten.vercel.app/)
+
 ### Requirements
 
 NodeJS > 14
-
-This project is create with [Vite](https://vite.dev)
-
-Demo site is [here](https://vercel.com)
 
 ## Installation
 
@@ -30,7 +30,12 @@ The app is running on port `3000`
 - Pagination
 - Column sorts
 
-## Testing with [Cypress](https://cypress.org)
+## Build Performance
+
+Chunk [ANTD](https://ant.design) styling into one file so the bundle is reduce in build time.
+Source [Rollup](https://rollupjs.org/guide/en/#outputmanualchunks)
+
+## Testing with [Cypress](https://cypress.io)
 
 Run `yarn test:cy`
 
