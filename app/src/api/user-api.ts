@@ -3,9 +3,9 @@ import axios from "../axios";
 import { User } from "../types/user";
 
 export type GetUserParams = {
-  page: number;
-  pageSize: number;
-  results: number;
+  page?: number;
+  pageSize?: number;
+  results?: number;
   gender?: string;
   keyword?: string;
   sortBy?: string;
