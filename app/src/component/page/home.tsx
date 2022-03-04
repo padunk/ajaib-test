@@ -1,6 +1,16 @@
 import React from "react";
 import { useGetUser } from "../../api/user-api";
-import { Input, Space, Spin, Table, Tag, message, Typography } from "antd";
+import {
+  Input,
+  Space,
+  Spin,
+  Table,
+  message,
+  Typography,
+  Select,
+  Form,
+  Button,
+} from "antd";
 import { tw } from "twind";
 import formatDate from "date-fns/format";
 
@@ -44,6 +54,8 @@ const columns = [
 ];
 
 export default function Home({}: Props) {
+  const [form] = Form.useForm();
+  const [gender, setGender] = React.useState("");
   const [keyword, setKeyword] = React.useState("");
 
   const [userResult, setUserResult] = React.useState<UserDataSource[]>([]);
@@ -51,7 +63,7 @@ export default function Home({}: Props) {
     status,
     data: user,
     error,
-  } = useGetUser({ page: 1, pageSize: 10, results: 10, keyword });
+  } = useGetUser({ page: 1, pageSize: 10, results: 10, keyword, gender });
 
   const onSearch = (value: string) => setKeyword(value);
 
@@ -82,12 +94,42 @@ export default function Home({}: Props) {
 
   return (
     <div className={tw`flex flex-col gap-8`}>
-      <Input.Search
-        placeholder="input search text"
-        allowClear
-        onSearch={onSearch}
-        enterButton
-      />
+      <Form
+        form={form}
+        layout="vertical"
+        className={tw`flex gap-4 items-center flex-wrap`}
+        initialValues={{ gender: "all" }}
+      >
+        <Form.Item label="Search" name="search">
+          <Input.Search
+            placeholder="input search text"
+            allowClear
+            onSearch={onSearch}
+            enterButton
+          />
+        </Form.Item>
+        <div className={tw`w-40`}>
+          <Form.Item label="Gender" name="gender">
+            <Select onChange={(value) => setGender(value)}>
+              <Select.Option value="all">All</Select.Option>
+              <Select.Option value="female">Female</Select.Option>
+              <Select.Option value="male">Male</Select.Option>
+            </Select>
+          </Form.Item>
+        </div>
+        <Button
+          type="default"
+          onClick={() => {
+            form.resetFields();
+            setGender("all");
+            setKeyword("");
+          }}
+          className={tw`mt-1`}
+        >
+          Reset Filter
+        </Button>
+      </Form>
+
       {status === "loading" ? (
         <Spin spinning size="large" />
       ) : status === "error" ? (

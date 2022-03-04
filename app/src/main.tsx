@@ -5,7 +5,13 @@ import App from "./App";
 import { QueryClientProvider, QueryClient } from "react-query";
 import "antd/dist/antd.css";
 
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      refetchOnWindowFocus: false,
+    },
+  },
+});
 
 ReactDOM.render(
   <React.StrictMode>

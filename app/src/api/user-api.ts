@@ -13,11 +13,14 @@ type GetUserParams = {
 };
 
 export function useGetUser(options: GetUserParams) {
-  const queriesString = Object.keys(options)
-    .map((key) => {
-      return `${key}=${options[key as keyof GetUserParams]}`;
-    })
-    .join("&");
+  const queries = [];
+  for (const key of Object.keys(options)) {
+    const value = options[key as keyof GetUserParams];
+    if (value === "") continue;
+    queries.push(`${key}=${value}`);
+  }
+
+  let queriesString = queries.join("&");
 
   const fetchAllUsers = async () => {
     try {
