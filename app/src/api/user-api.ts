@@ -25,7 +25,7 @@ export function useGetUser(options: GetUserParams) {
   const fetchAllUsers = async () => {
     try {
       const data = await axios.get(`?${queriesString}`);
-      console.log("data", data);
+      // console.log("data", data);
       return data.data.results;
     } catch (error) {
       console.log(error);

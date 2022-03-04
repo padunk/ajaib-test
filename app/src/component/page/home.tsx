@@ -115,7 +115,7 @@ export default function Home() {
     filters: Record<string, FilterValue | null>,
     sorter: SorterResult<User> | SorterResult<User>[]
   ) => {
-    console.log("tableChange :>> ", pagination, sorter);
+    // console.log("tableChange :>> ", pagination, sorter);
     let field = "";
     let order = "";
     if (!Array.isArray(sorter)) {
