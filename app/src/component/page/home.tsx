@@ -44,14 +44,16 @@ const columns = [
 ];
 
 export default function Home({}: Props) {
+  const [keyword, setKeyword] = React.useState("");
+
   const [userResult, setUserResult] = React.useState<UserDataSource[]>([]);
   const {
     status,
     data: user,
     error,
-  } = useGetUser({ page: 1, pageSize: 10, results: 10 });
+  } = useGetUser({ page: 1, pageSize: 10, results: 10, keyword });
 
-  const onSearch = (value: string) => console.log("value :>> ", value);
+  const onSearch = (value: string) => setKeyword(value);
 
   const renderError = () => {
     message.error(error);
@@ -64,7 +66,6 @@ export default function Home({}: Props) {
 
   React.useEffect(() => {
     if (user && user.length > 0) {
-      console.log("user :>> ", user);
       const results: UserDataSource[] = user.map((u, idx) => {
         return {
           key: String(idx),
