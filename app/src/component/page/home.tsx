@@ -18,6 +18,7 @@ import { ColumnsType } from "antd/lib/table";
 import { User } from "../../types/user";
 import { FilterValue, SorterResult } from "antd/lib/table/interface";
 import produce from "immer";
+import { PAGE_SIZE, RESET_VALUE, UPDATE_VALUE } from "../../constants";
 
 const columns: ColumnsType<User> = [
   {
@@ -55,13 +56,9 @@ const columns: ColumnsType<User> = [
   },
 ];
 
-const PAGE_SIZE = 8;
-const UPDATE_VALUE = "UPDATE_VALUE";
-const RESET_VALUE = "RESET_VALUE";
-
 export type ActionType = {
   type: typeof UPDATE_VALUE | typeof RESET_VALUE;
-  payload?: any;
+  payload?: GetUserParams;
 };
 
 const initialParams: GetUserParams = {
