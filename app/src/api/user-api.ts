@@ -29,6 +29,7 @@ export function useGetUser(options: GetUserParams) {
       return data.data.results;
     } catch (error) {
       console.log(error);
+      throw new Error((error as Error).message);
     }
   };
 
