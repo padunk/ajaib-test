@@ -204,6 +204,7 @@ export default function Home() {
           }}
           onChange={handleTableChange}
           rowKey={(data) => data.login.uuid}
+          sortDirections={["ascend", "descend", "ascend"]}
           data-test="user-table"
         />
       )}
