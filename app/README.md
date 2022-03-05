@@ -4,7 +4,7 @@
 
 This project is create to fulfilled the requirements for Senior Frontend Web Engineer position
 
-This project is create with [Vite](https://vite.dev) and [TypeScript](https://typescriptlang.org)
+This project is create with [Vite](https://vitejs.dev) and [TypeScript](https://typescriptlang.org)
 
 Demo site is [here](https://ajaib-test-ten.vercel.app/)
 
