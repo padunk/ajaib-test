@@ -143,7 +143,7 @@ export default function Home() {
       >
         <Form.Item label="Search" name="search">
           <Input.Search
-            placeholder="input search text"
+            placeholder="Search..."
             allowClear
             onSearch={onSearchKeyword}
             enterButton
@@ -160,10 +160,17 @@ export default function Home() {
                   },
                 })
               }
+              data-test="gender-select"
             >
-              <Select.Option value="all">All</Select.Option>
-              <Select.Option value="female">Female</Select.Option>
-              <Select.Option value="male">Male</Select.Option>
+              <Select.Option value="all" data-test="gender-option">
+                All
+              </Select.Option>
+              <Select.Option value="female" data-test="gender-option">
+                Female
+              </Select.Option>
+              <Select.Option value="male" data-test="gender-option">
+                Male
+              </Select.Option>
             </Select>
           </Form.Item>
         </div>
@@ -197,6 +204,7 @@ export default function Home() {
           }}
           onChange={handleTableChange}
           rowKey={(data) => data.login.uuid}
+          data-test="user-table"
         />
       )}
     </div>
